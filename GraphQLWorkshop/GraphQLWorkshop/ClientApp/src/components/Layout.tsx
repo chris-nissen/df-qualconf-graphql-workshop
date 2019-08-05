@@ -2,7 +2,7 @@ import React from 'react';
 import { Container } from 'reactstrap';
 import NavMenu from './NavMenu';
 
-export default props => (
+const layout: React.FunctionComponent = props => (
   <div>
     <NavMenu />
     <Container>
@@ -10,3 +10,4 @@ export default props => (
     </Container>
   </div>
 );
+export default layout;

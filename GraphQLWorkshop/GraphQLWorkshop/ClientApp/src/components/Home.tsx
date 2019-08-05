@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router';
 
-const Home = props => (
+const Home: React.FunctionComponent<RouteComponentProps<{}>> = props => (
   <div>
     <h1>Hello, world!</h1>
     <p>Welcome to your new single-page application, built with:</p>

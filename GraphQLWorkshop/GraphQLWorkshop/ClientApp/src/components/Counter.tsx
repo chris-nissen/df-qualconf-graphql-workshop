@@ -2,8 +2,14 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { actionCreators } from '../store/Counter';
+import { ApplicationState } from '../store/configureStore';
 
-const Counter = props => (
+interface Props {
+    count: number;
+    increment: () => void;
+}
+
+const Counter: React.FunctionComponent<Props> = props => (
   <div>
     <h1>Counter</h1>
 
@@ -16,6 +22,6 @@ const Counter = props => (
 );
 
 export default connect(
-  state => state.counter,
+  (state: ApplicationState) => state.counter,
   dispatch => bindActionCreators(actionCreators, dispatch)
 )(Counter);

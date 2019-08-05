@@ -1,20 +1,27 @@
-const incrementCountType = 'INCREMENT_COUNT';
-const decrementCountType = 'DECREMENT_COUNT';
-const initialState = { count: 0 };
+import { Action, Reducer } from 'redux';
+
+export interface CounterState {
+    count: number;
+}
+
+const incrementCountActionType = 'INCREMENT_COUNT';
+const decrementCountActionType = 'DECREMENT_COUNT';
+const initialState: CounterState = { count: 0 };
 
 export const actionCreators = {
-  increment: () => ({ type: incrementCountType }),
-  decrement: () => ({ type: decrementCountType })
+    increment: () => ({ type: incrementCountActionType }),
+    decrement: () => ({ type: decrementCountActionType })
 };
 
-export const reducer = (state, action) => {
+export const reducer: Reducer<CounterState, Action> =
+    (state: CounterState | undefined, action: Action) => {
   state = state || initialState;
 
-  if (action.type === incrementCountType) {
+    if (action.type === incrementCountActionType) {
     return { ...state, count: state.count + 1 };
   }
 
-  if (action.type === decrementCountType) {
+    if (action.type === decrementCountActionType) {
     return { ...state, count: state.count - 1 };
   }
 

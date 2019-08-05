@@ -2,9 +2,15 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { actionCreators } from '../store/WeatherForecasts';
+import { actionCreators, WeatherForecastsState } from '../store/WeatherForecasts';
+import { RouteComponentProps } from 'react-router';
+import { ApplicationState } from '../store/configureStore';
 
-class FetchData extends Component {
+type Props = WeatherForecastsState
+    & typeof actionCreators
+    & RouteComponentProps<{ startDateIndex: string }>;
+
+class FetchData extends Component<Props> {
   componentDidMount() {
     // This method is called when the component is first added to the document
     this.ensureDataFetched();
@@ -32,7 +38,7 @@ class FetchData extends Component {
   }
 }
 
-function renderForecastsTable(props) {
+function renderForecastsTable(props: Props) {
   return (
     <table className='table table-striped'>
       <thead>
@@ -57,7 +63,7 @@ function renderForecastsTable(props) {
   );
 }
 
-function renderPagination(props) {
+function renderPagination(props: Props) {
   const prevStartDateIndex = (props.startDateIndex || 0) - 5;
   const nextStartDateIndex = (props.startDateIndex || 0) + 5;
 
@@ -69,6 +75,6 @@ function renderPagination(props) {
 }
 
 export default connect(
-  state => state.weatherForecasts,
+  (state: ApplicationState) => state.weatherForecasts,
   dispatch => bindActionCreators(actionCreators, dispatch)
 )(FetchData);
