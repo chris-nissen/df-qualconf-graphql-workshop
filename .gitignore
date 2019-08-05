@@ -5,3 +5,4 @@
 *.suo
 /.vs
 /GraphQLWorkshop/.vs/GraphQLWorkshop/v16/Server/sqlite3
+/GraphQLWorkshop/.vs/GraphQLWorkshop/config
