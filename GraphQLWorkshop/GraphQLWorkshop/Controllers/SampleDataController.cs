@@ -24,5 +24,20 @@ namespace GraphQLWorkshop.Controllers
 
             return forecastBatch;
         }
+
+        [HttpPost("UpdateWeatherForecast")]
+        public void UpdateWeatherForecast([FromBody] UpdateRequest request, 
+            [FromServices] ApplicationDbContext dbContext)
+        {
+            var forecast = dbContext.WeatherForecasts.Single(f => f.Id == request.Id);
+            forecast.Summary = request.Summary;
+            dbContext.SaveChanges();
+        }
+
+        public class UpdateRequest
+        {
+            public int Id { get; set; }
+            public string Summary { get; set; }
+        }
     }
 }
