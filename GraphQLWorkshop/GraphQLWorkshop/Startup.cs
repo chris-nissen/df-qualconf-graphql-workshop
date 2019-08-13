@@ -1,4 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using GraphQL;
+using GraphQL.Types;
 using GraphQLWorkshop.Data;
+using GraphQLWorkshop.GraphQL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,6 +43,31 @@ namespace GraphQLWorkshop
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            ConfigureGraphQL(services);
+        }
+
+        private void ConfigureGraphQL(IServiceCollection services)
+        {
+            foreach (var type in GetGraphQlTypes())
+            {
+                services.AddSingleton(type);
+            }
+
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+            services.AddSingleton<IDependencyResolver>(
+                provider => new FuncDependencyResolver(provider.GetRequiredService));
+            services.AddSingleton<ISchema, ApplicationSchema>();
+        }
+
+        static IEnumerable<Type> GetGraphQlTypes()
+        {
+            return typeof(Startup).Assembly
+                .GetTypes()
+                .Where(x => !x.IsAbstract &&
+                            (typeof(IObjectGraphType).IsAssignableFrom(x) ||
+                             typeof(IInputObjectGraphType).IsAssignableFrom(x) ||
+                             typeof(EnumerationGraphType).IsAssignableFrom(x)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
