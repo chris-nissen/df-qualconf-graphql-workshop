@@ -8,6 +8,8 @@ import configureStore, { ApplicationState } from './store/configureStore';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
+import ApolloClient from 'apollo-boost';
+
 // Create browser history to use in the Redux store
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const history = createBrowserHistory({ basename: (baseUrl as string | undefined) });
@@ -16,12 +18,18 @@ const history = createBrowserHistory({ basename: (baseUrl as string | undefined)
 const initialState = (window as any).initialReduxState as ApplicationState;
 const store = configureStore(history, initialState);
 
+const apolloClient = new ApolloClient();
+apolloClient.writeData({
+    data: {
+        count: 42
+}});
+
 const rootElement = document.getElementById('root');
 
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <App />
+            <App apolloClient={apolloClient} />
     </ConnectedRouter>
   </Provider>,
   rootElement);

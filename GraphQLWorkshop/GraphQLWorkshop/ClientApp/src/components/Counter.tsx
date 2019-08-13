@@ -3,25 +3,32 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { actionCreators } from '../store/Counter';
 import { ApplicationState } from '../store/configureStore';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 interface Props {
-    count: number;
-    increment: () => void;
 }
 
-const Counter: React.FunctionComponent<Props> = props => (
-  <div>
-    <h1>Counter</h1>
+const Counter: React.FunctionComponent<Props> = props => {
+    const { data, client } = useQuery(gql`
+    {
+        count @client
+    }
+`);
 
-    <p>This is a simple example of a React component.</p>
+    return (
+        <div>
+            <h1>Counter</h1>
 
-    <p>Current count: <strong>{props.count}</strong></p>
+            <p>This is a simple example of a React component.</p>
 
-    <button className="btn btn-primary" onClick={props.increment}>Increment</button>
-  </div>
-);
+            <p>Current count: <strong>{data.count}</strong></p>
 
-export default connect(
-  (state: ApplicationState) => state.counter,
-  dispatch => bindActionCreators(actionCreators, dispatch)
-)(Counter);
+            <button className="btn btn-primary" onClick={() =>
+                client.writeData({ data: { count: data.count + 1 } })
+            }>Increment</button>
+        </div>
+    );
+};
+
+export default Counter;
