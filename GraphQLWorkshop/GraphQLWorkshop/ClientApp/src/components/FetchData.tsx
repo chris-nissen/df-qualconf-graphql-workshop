@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -16,8 +16,8 @@ type Props = WeatherForecastsState
     & RouteComponentProps<{ startDateIndex: string }>;
 
 const GetForecasts = gql`
-        query {
-            weatherForecasts {
+        query($startIndex: Int!) {
+            weatherForecasts(index: $startIndex) {
                 id
                 date
                 dateFormatted
@@ -29,7 +29,17 @@ const GetForecasts = gql`
 `;
 
 const FetchData: React.FunctionComponent<Props> = props => {
-    const { loading, error, data } = useQuery(GetForecasts);
+    useEffect(() => {
+        const startDateIndex = parseInt(props.match.params.startDateIndex, 10) || 0;
+        props.requestWeatherForecasts(startDateIndex);
+    });
+
+    const { loading, error, data } = useQuery(GetForecasts,
+        {
+            variables: {
+                startIndex: props.startDateIndex || 0
+            }
+        });
 
     return (
         <div>

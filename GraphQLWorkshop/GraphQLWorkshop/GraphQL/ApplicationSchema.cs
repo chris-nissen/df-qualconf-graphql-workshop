@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GraphQL;
 using GraphQL.Types;
@@ -20,14 +21,16 @@ namespace GraphQLWorkshop.GraphQL
         {
             Field<ListGraphType<WeatherForecastGraphType>, IEnumerable<WeatherForecast>>()
                 .Name("weatherForecasts")
+                .Argument<IntGraphType>("index", "The page index to fetch")
                 .Resolve(context =>
                 {
                     var userContext = (GraphQLUserContext)context.UserContext;
                     var dbContext = userContext.DbContext;
+                    var index = context.GetArgument<int>("index");
 
                     return dbContext.WeatherForecasts
                         .OrderBy(wf => wf.Date)
-                        .Skip(0)
+                        .Skip(Math.Min(index, 0))
                         .Take(5);
                 });
         }
