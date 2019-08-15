@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using GraphQL;
-using GraphQL.Language.AST;
+using GraphQL.EntityFramework;
 using GraphQL.Types;
 using GraphQLWorkshop.Data;
 
@@ -16,28 +14,20 @@ namespace GraphQLWorkshop.GraphQL
             Mutation = resolver.Resolve<Mutation>();
         }
     }
-    
-    public class Query : ObjectGraphType
-    {
-        public Query()
-        {
-            Field<ListGraphType<WeatherForecastGraphType>, IEnumerable<WeatherForecast>>()
-                .Name("weatherForecasts")
-                .Argument<IntGraphType>("index", "The page index to fetch")
-                .Resolve(context =>
-                {
-                    var userContext = (GraphQLUserContext)context.UserContext;
-                    var dbContext = userContext.DbContext;
-                    var index = context.GetArgument<int>("index");
 
-                    return dbContext.WeatherForecasts
-                        .OrderBy(wf => wf.Date)
-                        .Skip(Math.Max(index, 0))
-                        .Take(5);
-                });
+    public class Query : QueryGraphType<ApplicationDbContext>
+    {
+        public Query(IEfGraphQLService<ApplicationDbContext> graphQlService)
+            : base(graphQlService)
+        {
+            AddQueryField(
+                name: "weatherForecasts",
+                resolve: context => context.DbContext.WeatherForecasts,
+                graphType: typeof(WeatherForecastGraphType)
+            );
         }
     }
-    
+
     public class Mutation : ObjectGraphType
     {
         public Mutation()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GraphQL;
+using GraphQL.EntityFramework;
 using GraphQL.Types;
 using GraphQLWorkshop.Data;
 using GraphQLWorkshop.GraphQL;
@@ -30,11 +31,22 @@ namespace GraphQLWorkshop
         {
             services.AddScoped<IDbInitializer, DbInitializer>();
 
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection"));
+                    connectionString);
             });
+
+            var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            builder.UseSqlServer(connectionString);
+            using (var context = new ApplicationDbContext(builder.Options))
+            {
+                EfGraphQLConventions.RegisterInContainer(
+                    services,
+                    dbContext: context,
+                    dbContextFromUserContext: userContext => ((GraphQLUserContext)userContext).DbContext);
+            }
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
