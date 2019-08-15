@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { actionCreators, WeatherForecastsState } from '../store/WeatherForecasts';
 import { RouteComponentProps } from 'react-router';
 import { ApplicationState } from '../store/configureStore';
-import { Input, Button, Alert } from 'reactstrap';
+import { Input, Alert } from 'reactstrap';
 import _ from 'lodash';
 import { Forecast } from 'models';
 
