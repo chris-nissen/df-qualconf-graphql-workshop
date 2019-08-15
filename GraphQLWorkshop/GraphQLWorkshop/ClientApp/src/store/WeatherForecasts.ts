@@ -57,7 +57,7 @@ export const actionCreators = {
             dispatch({ type: updateForecastActionType, id, updatedSummary });
 
             const url = `api/SampleData/UpdateWeatherForecast`;
-            const response = await fetch(url,
+            await fetch(url,
                 {
                     method: 'post',
                     headers: {

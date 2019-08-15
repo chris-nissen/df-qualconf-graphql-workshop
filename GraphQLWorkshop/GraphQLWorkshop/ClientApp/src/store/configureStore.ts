@@ -25,8 +25,8 @@ export default function configureStore(history: History, initialState: Applicati
     const enhancers = [];
     const isDevelopment = process.env.NODE_ENV === 'development';
     const windowIfDefined = typeof window === 'undefined' ? null : window as any;
-    if (isDevelopment && windowIfDefined && windowIfDefined.devToolsExtension) {
-        enhancers.push(windowIfDefined.devToolsExtension());
+    if (isDevelopment && windowIfDefined && windowIfDefined.__REDUX_DEVTOOLS_EXTENSION__) {
+        enhancers.push(windowIfDefined.__REDUX_DEVTOOLS_EXTENSION__());
     }
 
     const createRootReducer = (history: History) => combineReducers({
