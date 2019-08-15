@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GraphQL;
+using GraphQL.Language.AST;
 using GraphQL.Types;
 using GraphQLWorkshop.Data;
 
@@ -12,6 +13,7 @@ namespace GraphQLWorkshop.GraphQL
         public ApplicationSchema(IDependencyResolver resolver) : base(resolver)
         {
             Query = resolver.Resolve<Query>();
+            Mutation = resolver.Resolve<Mutation>();
         }
     }
     
@@ -32,6 +34,40 @@ namespace GraphQLWorkshop.GraphQL
                         .OrderBy(wf => wf.Date)
                         .Skip(Math.Max(index, 0))
                         .Take(5);
+                });
+        }
+    }
+    
+    public class Mutation : ObjectGraphType
+    {
+        public Mutation()
+        {
+            Field<MutateWeatherForecastGraphType>()
+                .Name("weatherForecasts")
+                .Resolve(context => new { });
+        }
+    }
+
+    public class MutateWeatherForecastGraphType : ObjectGraphType
+    {
+        public MutateWeatherForecastGraphType()
+        {
+            Field<WeatherForecastGraphType>()
+                .Name("updateSummary")
+                .Argument<IntGraphType>("id", "The database ID of the forecast")
+                .Argument<StringGraphType>("summary", "The new forecast summary")
+                .Resolve(context =>
+                {
+                    var forecastId = context.GetArgument<int>("id");
+                    var newSummary = context.GetArgument<string>("summary");
+                    var dbContext = ((GraphQLUserContext) context.UserContext).DbContext;
+
+                    var forecast = dbContext.WeatherForecasts.Single(f => f.Id == forecastId);
+                    forecast.Summary = newSummary;
+
+                    dbContext.SaveChanges();
+
+                    return forecast;
                 });
         }
     }

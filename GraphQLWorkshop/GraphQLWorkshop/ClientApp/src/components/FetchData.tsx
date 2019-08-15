@@ -9,7 +9,7 @@ import { Input, Alert } from 'reactstrap';
 import _ from 'lodash';
 import { Forecast } from 'models';
 import gql from 'graphql-tag';
-import { useQuery, useApolloClient } from '@apollo/react-hooks';
+import { useQuery, useApolloClient, useMutation } from '@apollo/react-hooks';
 
 type Props = WeatherForecastsState
     & typeof actionCreators
@@ -28,16 +28,28 @@ const GetForecasts = gql`
         }
 `;
 
+const UpdateForecastSummaryMutation = gql`
+    mutation($id: Int!, $summary: String!) {
+        weatherForecasts {
+            updateSummary(id: $id, summary: $summary) {
+                id
+                summary
+            }
+        }
+    }
+`;
+
 const FetchData: React.FunctionComponent<Props> = props => {
     const apolloClient = useApolloClient();
 
     useEffect(() => {
-        apolloClient.writeData({
-            data: {
-                weatherForecastIndex: parseInt(props.match.params.startDateIndex, 10) || 0
-            }
-        });
-    }, [apolloClient, props.match.params.startDateIndex]);
+            apolloClient.writeData({
+                data: {
+                    weatherForecastIndex: parseInt(props.match.params.startDateIndex, 10) || 0
+                }
+            });
+        },
+        [apolloClient, props.match.params.startDateIndex]);
 
     const indexQuery = useQuery<{ weatherForecastIndex: number }>(gql`
     {
@@ -47,8 +59,8 @@ const FetchData: React.FunctionComponent<Props> = props => {
     const index = indexQuery.data && indexQuery.data.weatherForecastIndex !== undefined
         ? indexQuery.data.weatherForecastIndex
         : 0;
-    
-    const { loading, error, data } = useQuery<{ weatherForecasts: Forecast[] }, { startIndex: number }>(
+
+    const forecastQuery = useQuery<{ weatherForecasts: Forecast[] }, { startIndex: number }>(
         GetForecasts,
         {
             variables: {
@@ -57,19 +69,26 @@ const FetchData: React.FunctionComponent<Props> = props => {
             skip: !indexQuery.data
         });
 
+    const [updateSummaryMutate] =
+        useMutation<{ updateSummary: Forecast }, { id: number, summary: string }>(UpdateForecastSummaryMutation);
+
     return (
         <div>
             <h1>Weather forecast</h1>
             <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
-            {renderForecastsTable(props, data ? data.weatherForecasts : [])}
+            {renderForecastsTable(props,
+                forecastQuery.data ? forecastQuery.data.weatherForecasts : [],
+                (id, summary) => updateSummaryMutate({ variables: { id, summary } }))}
             {renderPagination(index)}
-            {loading ? <Alert color="info">Loading...</Alert> : null}
-            {error ? <Alert color="danger">{`Error! ${error.message}`}</Alert> : null}
+            {forecastQuery.loading ? <Alert color="info">Loading...</Alert> : null}
+            {forecastQuery.error ? <Alert color="danger">{`Error! ${forecastQuery.error.message}`}</Alert> : null}
         </div>
     );
 }
 
-function renderForecastsTable(props: Props, forecasts: Forecast[]) {
+function renderForecastsTable(props: Props,
+    forecasts: Forecast[],
+    updateSummary: (id: number, summary: string) => void) {
     const sortedForecasts = _.orderBy(forecasts, (f: Forecast) => f.date);
     return (
         <table className='table table-striped'>
@@ -89,7 +108,7 @@ function renderForecastsTable(props: Props, forecasts: Forecast[]) {
                     <td>{forecast.temperatureF}</td>
                     <td>
                         <Input value={forecast.summary}
-                               onChange={e => props.updateWeatherForecast(forecast.id, e.target.value)}/>
+                               onChange={e => updateSummary(forecast.id, e.target.value)}/>
                     </td>
                 </tr>
             )}
