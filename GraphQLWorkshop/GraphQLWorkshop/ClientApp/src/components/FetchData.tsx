@@ -16,7 +16,7 @@ type Props = WeatherForecastsState
     & RouteComponentProps<{ startDateIndex: string }>;
 
 const GetForecasts = gql`
-        query($startIndex: Int!) {
+        query GetForecasts($startIndex: Int!) {
             weatherForecasts(index: $startIndex) {
                 id
                 date
@@ -39,7 +39,7 @@ const FetchData: React.FunctionComponent<Props> = props => {
         });
     }, [apolloClient, props.match.params.startDateIndex]);
 
-    const indexQuery = useQuery(gql`
+    const indexQuery = useQuery<{ weatherForecastIndex: number }>(gql`
     {
         weatherForecastIndex @client
     }
@@ -48,7 +48,8 @@ const FetchData: React.FunctionComponent<Props> = props => {
         ? indexQuery.data.weatherForecastIndex
         : 0;
     
-    const { loading, error, data } = useQuery(GetForecasts,
+    const { loading, error, data } = useQuery<{ weatherForecasts: Forecast[] }, { startIndex: number }>(
+        GetForecasts,
         {
             variables: {
                 startIndex: index
