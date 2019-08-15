@@ -18,7 +18,9 @@ const history = createBrowserHistory({ basename: (baseUrl as string | undefined)
 const initialState = (window as any).initialReduxState as ApplicationState;
 const store = configureStore(history, initialState);
 
-const apolloClient = new ApolloClient();
+const apolloClient = new ApolloClient({
+    resolvers: {}
+});
 apolloClient.writeData({
     data: {
         count: 42

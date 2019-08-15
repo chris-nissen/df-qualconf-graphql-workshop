@@ -30,7 +30,7 @@ namespace GraphQLWorkshop.GraphQL
 
                     return dbContext.WeatherForecasts
                         .OrderBy(wf => wf.Date)
-                        .Skip(Math.Min(index, 0))
+                        .Skip(Math.Max(index, 0))
                         .Take(5);
                 });
         }
