@@ -1,19 +1,13 @@
 import React, { useEffect } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { actionCreators, WeatherForecastsState } from '../store/WeatherForecasts';
 import { RouteComponentProps } from 'react-router';
-import { ApplicationState } from '../store/configureStore';
 import { Input, Alert } from 'reactstrap';
 import _ from 'lodash';
 import { Forecast } from 'models';
 import gql from 'graphql-tag';
 import { useQuery, useApolloClient, useMutation } from '@apollo/react-hooks';
 
-type Props = WeatherForecastsState
-    & typeof actionCreators
-    & RouteComponentProps<{ startDateIndex: string }>;
+type Props = RouteComponentProps<{ startDateIndex: string }>;
 
 const GetForecasts = gql`
         query GetForecasts($startIndex: Int!) {
@@ -127,7 +121,4 @@ function renderPagination(index: number) {
            </p>;
 }
 
-export default connect(
-    (state: ApplicationState) => state.weatherForecasts,
-    dispatch => bindActionCreators(actionCreators, dispatch)
-)(FetchData);
+export default FetchData;

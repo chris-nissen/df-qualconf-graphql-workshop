@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 
 const Home: React.FunctionComponent<RouteComponentProps<{}>> = props => (
@@ -21,4 +20,4 @@ const Home: React.FunctionComponent<RouteComponentProps<{}>> = props => (
   </div>
 );
 
-export default connect()(Home);
+export default Home;
