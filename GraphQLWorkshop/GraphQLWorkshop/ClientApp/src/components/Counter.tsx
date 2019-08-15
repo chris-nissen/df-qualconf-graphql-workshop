@@ -1,8 +1,4 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { actionCreators } from '../store/Counter';
-import { ApplicationState } from '../store/configureStore';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 

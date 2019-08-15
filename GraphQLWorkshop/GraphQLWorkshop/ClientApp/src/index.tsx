@@ -21,6 +21,7 @@ const store = configureStore(history, initialState);
 const apolloClient = new ApolloClient({
     resolvers: {}
 });
+
 apolloClient.writeData({
     data: {
         count: 42
