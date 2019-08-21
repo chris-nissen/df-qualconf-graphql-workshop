@@ -22,7 +22,14 @@ const Counter: React.FunctionComponent<Props> = props => {
 
             <button className="btn btn-primary" onClick={() =>
                 client.writeData({ data: { count: data.count + 1 } })
-            }>Increment</button>
+            }>
+                Increment
+            </button>
+            <button className="btn btn-primary ml-1" onClick={() =>
+                client.writeData({ data: { count: data.count - 1 } })
+            }>
+                Decrement
+            </button>
         </div>
     );
 };

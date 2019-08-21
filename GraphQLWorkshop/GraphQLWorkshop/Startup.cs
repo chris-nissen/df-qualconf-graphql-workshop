@@ -30,10 +30,10 @@ namespace GraphQLWorkshop
         {
             services.AddScoped<IDbInitializer, DbInitializer>();
 
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(connectionString);
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
