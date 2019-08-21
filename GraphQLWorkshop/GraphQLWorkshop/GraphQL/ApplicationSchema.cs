@@ -17,18 +17,18 @@ namespace GraphQLWorkshop.GraphQL
         }
     }
     
-    public class Query : ObjectGraphType
+    public class ApplicationQuery : ObjectGraphType
     {
-        public Query()
+        public ApplicationQuery()
         {
             Field<ListGraphType<WeatherForecastGraphType>, IEnumerable<WeatherForecast>>()
                 .Name("weatherForecasts")
                 .Argument<IntGraphType>("index", "The page index to fetch")
-                .Resolve(context =>
+                .Resolve(graphQlContext =>
                 {
-                    var userContext = (GraphQLUserContext)context.UserContext;
+                    var userContext = (ApplicationUserContext)graphQlContext.UserContext;
                     var dbContext = userContext.DbContext;
-                    var index = context.GetArgument<int>("index");
+                    var index = graphQlContext.GetArgument<int>("index");
 
                     return dbContext.WeatherForecasts
                         .OrderBy(wf => wf.Date)
@@ -86,7 +86,7 @@ namespace GraphQLWorkshop.GraphQL
         }
     }
 
-    public class GraphQLUserContext
+    public class ApplicationUserContext
     {
         public ApplicationDbContext DbContext { get; set; }
     }

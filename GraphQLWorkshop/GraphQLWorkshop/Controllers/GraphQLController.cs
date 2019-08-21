@@ -35,7 +35,7 @@ namespace GraphQLWorkshop.Controllers
                 Schema = _schema,
                 Query = query.Query,
                 Inputs = inputs,
-                UserContext = new GraphQLUserContext
+                UserContext = new ApplicationUserContext
                 {
                     DbContext = dbContext
                 },
