@@ -10,8 +10,8 @@ namespace GraphQLWorkshop.GraphQL
     {
         public ApplicationSchema(IDependencyResolver resolver) : base(resolver)
         {
-            Query = resolver.Resolve<Query>();
-            Mutation = resolver.Resolve<Mutation>();
+            Query = resolver.Resolve<ApplicationQuery>();
+            Mutation = resolver.Resolve<ApplicationMutation>();
         }
     }
 
@@ -27,10 +27,10 @@ namespace GraphQLWorkshop.GraphQL
             );
         }
     }
-
-    public class Mutation : ObjectGraphType
+    
+    public class ApplicationMutation : ObjectGraphType
     {
-        public Mutation()
+        public ApplicationMutation()
         {
             Field<MutateWeatherForecastGraphType>()
                 .Name("weatherForecasts")
@@ -50,7 +50,7 @@ namespace GraphQLWorkshop.GraphQL
                 {
                     var forecastId = context.GetArgument<int>("id");
                     var newSummary = context.GetArgument<string>("summary");
-                    var dbContext = ((GraphQLUserContext) context.UserContext).DbContext;
+                    var dbContext = ((ApplicationUserContext) context.UserContext).DbContext;
 
                     var forecast = dbContext.WeatherForecasts.Single(f => f.Id == forecastId);
                     forecast.Summary = newSummary;
@@ -76,7 +76,7 @@ namespace GraphQLWorkshop.GraphQL
         }
     }
 
-    public class GraphQLUserContext
+    public class ApplicationUserContext
     {
         public ApplicationDbContext DbContext { get; set; }
     }
