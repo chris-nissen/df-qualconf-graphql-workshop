@@ -15,9 +15,9 @@ namespace GraphQLWorkshop.GraphQL
         }
     }
 
-    public class Query : QueryGraphType<ApplicationDbContext>
+    public class ApplicationQuery : QueryGraphType<ApplicationDbContext>
     {
-        public Query(IEfGraphQLService<ApplicationDbContext> graphQlService)
+        public ApplicationQuery(IEfGraphQLService<ApplicationDbContext> graphQlService)
             : base(graphQlService)
         {
             AddQueryField(

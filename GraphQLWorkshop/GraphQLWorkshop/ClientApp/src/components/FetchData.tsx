@@ -11,7 +11,12 @@ type Props = RouteComponentProps<{ startDateIndex: string }>;
 
 const GetForecasts = gql`
         query GetForecasts($startIndex: Int!) {
-            weatherForecasts(skip: $startIndex, take: 5, orderBy: { path: "Date" }) {
+            weatherForecasts(skip: $startIndex, take: 5, orderBy: { path: "Date" },
+				where: {
+				    path: "temperatureC",
+				    comparison: "greaterThan",
+                    value: "0"
+                }) {
                 id
                 date
                 dateFormatted

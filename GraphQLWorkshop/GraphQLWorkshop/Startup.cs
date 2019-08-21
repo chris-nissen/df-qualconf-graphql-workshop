@@ -41,10 +41,8 @@ namespace GraphQLWorkshop
             builder.UseSqlServer(connectionString);
             using (var context = new ApplicationDbContext(builder.Options))
             {
-                EfGraphQLConventions.RegisterInContainer(
-                    services,
-                    dbContext: context,
-                    dbContextFromUserContext: userContext => ((GraphQLUserContext)userContext).DbContext);
+                EfGraphQLConventions.RegisterInContainer(services, context,
+                    userContext => ((ApplicationUserContext)userContext).DbContext);
             }
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
