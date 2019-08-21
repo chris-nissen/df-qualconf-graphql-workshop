@@ -56,7 +56,7 @@ namespace GraphQLWorkshop
             
             foreach (var type in typeof(Startup).Assembly
                 .GetTypes()
-                .Where(t => typeof(EnumerationGraphType).IsAssignableFrom(t)))
+                .Where(t => typeof(IObjectGraphType).IsAssignableFrom(t)))
             {
                 services.AddSingleton(type);
             }
