@@ -49,25 +49,17 @@ namespace GraphQLWorkshop
 
         private void ConfigureGraphQL(IServiceCollection services)
         {
-            foreach (var type in GetGraphQlTypes())
-            {
-                services.AddSingleton(type);
-            }
-
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<IDependencyResolver>(
                 provider => new FuncDependencyResolver(provider.GetRequiredService));
             services.AddSingleton<ISchema, ApplicationSchema>();
-        }
-
-        static IEnumerable<Type> GetGraphQlTypes()
-        {
-            return typeof(Startup).Assembly
+            
+            foreach (var type in typeof(Startup).Assembly
                 .GetTypes()
-                .Where(x => !x.IsAbstract &&
-                            (typeof(IObjectGraphType).IsAssignableFrom(x) ||
-                             typeof(IInputObjectGraphType).IsAssignableFrom(x) ||
-                             typeof(EnumerationGraphType).IsAssignableFrom(x)));
+                .Where(t => typeof(EnumerationGraphType).IsAssignableFrom(t)))
+            {
+                services.AddSingleton(type);
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
