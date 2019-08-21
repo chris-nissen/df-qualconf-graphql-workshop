@@ -9,17 +9,19 @@ interface Props {
     increment: () => void;
 }
 
-const Counter: React.FunctionComponent<Props> = props => (
-  <div>
-    <h1>Counter</h1>
+const Counter: React.FunctionComponent<Props> = props => {
+    return (
+        <div>
+            <h1>Counter</h1>
 
-    <p>This is a simple example of a React component.</p>
+            <p>This is a simple example of a React component.</p>
 
-    <p>Current count: <strong>{props.count}</strong></p>
+            <p>Current count: <strong>{props.count}</strong></p>
 
-    <button className="btn btn-primary" onClick={props.increment}>Increment</button>
-  </div>
-);
+            <button className="btn btn-primary" onClick={props.increment}>Increment</button>
+        </div>
+    );
+};
 
 export default connect(
   (state: ApplicationState) => state.counter,

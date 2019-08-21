@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -13,33 +13,21 @@ type Props = WeatherForecastsState
     & typeof actionCreators
     & RouteComponentProps<{ startDateIndex: string }>;
 
-class FetchData extends Component<Props> {
-    componentDidMount() {
-        // This method is called when the component is first added to the document
-        this.ensureDataFetched();
-    }
+const FetchData: React.FunctionComponent<Props> = props => {
+    useEffect(() => {
+        const startDateIndex = parseInt(props.match.params.startDateIndex, 10) || 0;
+        props.requestWeatherForecasts(startDateIndex);
+    });
 
-    componentDidUpdate() {
-        // This method is called when the route parameters change
-        this.ensureDataFetched();
-    }
-
-    ensureDataFetched() {
-        const startDateIndex = parseInt(this.props.match.params.startDateIndex, 10) || 0;
-        this.props.requestWeatherForecasts(startDateIndex);
-    }
-
-    render() {
-        return (
-            <div>
-                <h1>Weather forecast</h1>
-                <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
-                {renderForecastsTable(this.props)}
-                {renderPagination(this.props)}
-                {this.props.isLoading ? <Alert color="info">Loading...</Alert> : null}
-            </div>
-        );
-    }
+    return (
+        <div>
+            <h1>Weather forecast</h1>
+            <p>This component demonstrates fetching data from the server and working with URL parameters.</p>
+            {renderForecastsTable(props)}
+            {renderPagination(props)}
+            {props.isLoading ? <Alert color="info">Loading...</Alert> : null}
+        </div>
+    );
 }
 
 function renderForecastsTable(props: Props) {
